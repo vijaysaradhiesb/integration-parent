@@ -1,0 +1,931 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss.fuse.bom</groupId>
+        <artifactId>jboss-fuse-parent</artifactId>
+        <version>6.3.0.redhat-224</version>
+    </parent>
+
+    <groupId>com.integration.service</groupId>
+    <artifactId>integration-parent</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <name>${organization.name} ${module.name}</name>
+
+    <properties>
+        <customer>INTEG</customer> <!-- default customer for SFs and services running in docker which uses AMQ, so we also have default customer for config : CASE SENSITIVE-->
+        <integration.super.feature.parent-version>[1,2)</integration.super.feature.parent-version>
+        <amq.configuration.compatibility.version>[5.13.5,5.13.6)</amq.configuration.compatibility.version>
+
+        <organization.name>Integ</organization.name>
+        <organization.url>http://www.integ.com</organization.url>
+        <module.name>Integration Parent</module.name>
+
+        <target.esb.name>fuse</target.esb.name>
+        <fuse-parent.version>630224</fuse-parent.version>
+
+        <!-- Docker -->
+        <docker.registry>docker-registry-default.apps.cloud.integ.lan/integ-registry</docker.registry>
+        <docker.from>fuse-base:${fuse-parent.version}</docker.from>
+        <docker.amq.version>5.13.5</docker.amq.version>
+        <docker.mariadb.version>10.2.7</docker.mariadb.version>
+
+        <docker.host.http.port>8181</docker.host.http.port>
+        <docker.host.ssh.port>8101</docker.host.ssh.port>
+        <docker.host.jmx.port>1099</docker.host.jmx.port>
+        <docker.host.rmi.port>44444</docker.host.rmi.port>
+        <docker.host.amq.http.port>8161</docker.host.amq.http.port>
+        <docker.host.amq.jms.port>61616</docker.host.amq.jms.port>
+        <docker.host.db.sql.port>1433</docker.host.db.sql.port>
+        <docker.host.mariadb.port>3306</docker.host.mariadb.port>
+
+        <docker.feature.name>${feature.name}</docker.feature.name>
+        <docker.connectivity.feature.name>${feature.name}-docker-connectivity</docker.connectivity.feature.name>
+
+        <ger.hz.network.tcpip.members>localhost</ger.hz.network.tcpip.members>
+        <docker.jms1.service>failover:(tcp://amq:61616)</docker.jms1.service>
+        <docker.jms1.username>admin</docker.jms1.username>
+        <docker.jms1.password>admin</docker.jms1.password>
+        <docker.jms2.service>failover:(tcp://amq:61616)</docker.jms2.service>
+        <docker.jms2.username>admin</docker.jms2.username>
+        <docker.jms2.password>admin</docker.jms2.password>
+
+        <docker.xads1.service>localhost</docker.xads1.service>
+        <docker.xads1.username>sa</docker.xads1.username>
+        <docker.xads1.password>sa</docker.xads1.password>
+        <docker.xads1.port>1433</docker.xads1.port>
+        <docker.xads1.dbname>master</docker.xads1.dbname>
+        <docker.xads1.driver>sqlserver</docker.xads1.driver> <!-- Possible options mysql, sqlserver -->
+        <docker.xads1.driver.class>com.microsoft.sqlserver.jdbc.SQLServerXADataSource</docker.xads1.driver.class>
+        <docker.xads2.service>localhost</docker.xads2.service>
+        <docker.xads2.username>sa</docker.xads2.username>
+        <docker.xads2.password>sa</docker.xads2.password>
+        <docker.xads2.port>1433</docker.xads2.port>
+        <docker.xads2.dbname>master</docker.xads2.dbname>
+        <docker.xads2.driver>sqlserver</docker.xads2.driver> <!-- Possible options mysql, sqlserver -->
+        <docker.xads2.driver.class>com.microsoft.sqlserver.jdbc.SQLServerXADataSource</docker.xads2.driver.class>
+
+        <docker.mariadb.username>user</docker.mariadb.username>
+        <docker.mariadb.password>pass</docker.mariadb.password>
+
+        <!-- Core settings -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <java.target.version>1.8</java.target.version>
+        <surefire.junit47.version>2.8</surefire.junit47.version>
+
+        <!-- Connectivity -->
+        <connectivity-jms.version>[1.0,1.1)</connectivity-jms.version>
+        <connectivity-xads.version>[1.0,1.1)</connectivity-xads.version>
+        <connectivity-hazelcast.version>[1.0,1.1)</connectivity-hazelcast.version>
+
+        <!-- Integ core apps -->
+        <mailer.version>[1.0,1.1)</mailer.version>
+        <error-reporting.version>[1.0,1.1)</error-reporting.version>
+        <external-systems-mappings-service.version>[1.0,1.1)</external-systems-mappings-service.version>
+        <contracts-common.version>[1.0,1.1)</contracts-common.version>
+
+        <!-- database -->
+        <sqljdbc.driver.version>6.0</sqljdbc.driver.version>
+        <mariadb.driver.version>1.5.4</mariadb.driver.version>
+        <liquibase.version>3.4.2</liquibase.version>
+        <liquibase.snakeyaml.version>1.13</liquibase.snakeyaml.version>
+
+        <!-- transaction manager & related -->
+        <org.apache.aries.transaction.jdbc>2.1.2</org.apache.aries.transaction.jdbc>
+        <org.apache.aries.transaction.manager>1.3.0</org.apache.aries.transaction.manager>
+
+        <!-- other -->
+        <hazelcast.version>3.6.2</hazelcast.version>
+        <hyperjaxb3.version>0.6.1</hyperjaxb3.version>
+        <hyperjaxb3.commons.version>2.3</hyperjaxb3.commons.version>
+        <jaxb2.commons.lang.version>2.3</jaxb2.commons.lang.version>
+        <jaxb2-basics.version>0.6.4</jaxb2-basics.version>
+        <saxon.version>9.5.1-5</saxon.version>
+        <cxf-xjc.version>3.0.5</cxf-xjc.version>
+        <javax.jms-api.version>2.0.1</javax.jms-api.version>
+        <xpp3.version>1.1.4c_7</xpp3.version>
+
+        <!--
+            Test
+        -->
+        <xmlunit.version>1.5</xmlunit.version>
+        <hamcrest.version>1.3</hamcrest.version>
+        <mockito.version>1.9.5</mockito.version>
+        <testng.version>6.3.1</testng.version>
+
+
+        <!--
+            Plugin
+        -->
+        <build.helper.plugin.version>1.7</build.helper.plugin.version>
+        <maven-compiler-plugin-version>2.3.2</maven-compiler-plugin-version>
+        <findbugs.version>3.0.0</findbugs.version>
+        <bundle.plugin.version>3.2.0</bundle.plugin.version>
+        <features.plugin.version>2.2.8</features.plugin.version>
+        <jaxb.plugin.version>1.6</jaxb.plugin.version>
+        <karaf.plugin.version>3.0.0.RC1</karaf.plugin.version>
+        <resources.plugin.version>2.4.3</resources.plugin.version>
+        <maven.surefire.plugin.version>2.17</maven.surefire.plugin.version>
+        <maven.release.plugin.version>2.4.2</maven.release.plugin.version>
+        <maven.deploy.plugin.version>2.8.1</maven.deploy.plugin.version>
+        <wagon.ftp.version>2.2</wagon.ftp.version>
+        <maven.source.plugin.version>2.3</maven.source.plugin.version>
+        <maven.install.plugin.version>2.5.1</maven.install.plugin.version>
+        <build.helper.maven.plugin.version>1.1</build.helper.maven.plugin.version>
+        <maven.antrun.plugin.version>1.3</maven.antrun.plugin.version>
+        <jacoco.maven.plugin.version>0.7.1.201405082137</jacoco.maven.plugin.version>
+        <maven.failsafe.plugin.version>2.15</maven.failsafe.plugin.version>
+        <docker-maven-plugin.version>0.20.0</docker-maven-plugin.version>
+
+        <!-- SCM -->
+        <scm.protocol>scm:git:</scm.protocol>
+        <scm.git.protocol>ssh://</scm.git.protocol>
+        <scm.host>ald-stash</scm.host>
+        <scm.ssh.port>7999</scm.ssh.port>
+        <scm.http.port>7990</scm.http.port>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.integration.service</groupId>
+                <artifactId>external-systems-mappings-service</artifactId>
+                <version>${external-systems-mappings-service.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.integration.service</groupId>
+                <artifactId>external-systems-mappings-api</artifactId>
+                <version>${external-systems-mappings-service.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.integration.service</groupId>
+                <artifactId>mailer-service-model</artifactId>
+                <version>${mailer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.integration.error.reporting</groupId>
+                <artifactId>generic-error-reporting-service</artifactId>
+                <version>${error-reporting.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.integration.product.connectivity</groupId>
+                <artifactId>jms-connectivity-provider</artifactId>
+                <version>${connectivity-jms.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.integration.product.connectivity</groupId>
+                <artifactId>jms-connectivity-provider</artifactId>
+                <version>${connectivity-jms.version}</version>
+                <classifier>test-sources</classifier>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.integration.product.connectivity</groupId>
+                <artifactId>xads-connectivity-provider</artifactId>
+                <version>${connectivity-xads.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.integration.product.connectivity</groupId>
+                <artifactId>xads-connectivity-provider</artifactId>
+                <version>${connectivity-xads.version}</version>
+                <classifier>test-sources</classifier>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.integration.product.connectivity</groupId>
+                <artifactId>hazelcast-connectivity-provider</artifactId>
+                <version>${connectivity-hazelcast.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.integration.product.connectivity</groupId>
+                <artifactId>hazelcast-connectivity-provider</artifactId>
+                <version>${connectivity-hazelcast.version}</version>
+                <classifier>test-sources</classifier>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-camel</artifactId>
+                <version>${activemq-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-jms_1.1_spec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-kahadb-store</artifactId>
+                <version>${activemq-version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-jms_1.1_spec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.jms</groupId>
+                <artifactId>javax.jms-api</artifactId>
+                <version>${javax.jms-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sf.saxon</groupId>
+                <artifactId>Saxon-HE</artifactId>
+                <version>${saxon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jvnet.jaxb2_commons</groupId>
+                <artifactId>jaxb2-commons-lang</artifactId>
+                <version>${jaxb2.commons.lang.version}</version>
+            </dependency>
+
+            <!-- test -->
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>${hamcrest.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>xmlunit</groupId>
+                <artifactId>xmlunit</artifactId>
+                <version>${xmlunit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-test-spring</artifactId>
+                <version>${camel-version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring-version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- database -->
+            <dependency>
+                <groupId>com.microsoft</groupId>
+                <artifactId>sqljdbc4</artifactId>
+                <version>${sqljdbc.driver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariadb.driver.version}</version>
+            </dependency>
+
+            <!-- Transaction manager and related -->
+            <dependency>
+                <groupId>org.apache.aries.transaction</groupId>
+                <artifactId>org.apache.aries.transaction.jdbc</artifactId>
+                <version>${org.apache.aries.transaction.jdbc}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.aries.transaction</groupId>
+                        <artifactId>org.apache.aries.transaction.manager</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.aries.transaction</groupId>
+                <artifactId>org.apache.aries.transaction.manager</artifactId>
+                <version>${org.apache.aries.transaction.manager}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jta_1.1_spec</artifactId>
+                <version>${geronimo-jta.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.components</groupId>
+                <artifactId>geronimo-connector</artifactId>
+                <version>${geronimo-connector.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.components</groupId>
+                        <artifactId>geronimo-transaction</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+
+            <!-- jackson, fasterxml, json -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-base</artifactId>
+                <version>${jackson2-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-json-provider</artifactId>
+                <version>${jackson2-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.servicemix.bundles</groupId>
+                <artifactId>org.apache.servicemix.bundles.json-lib</artifactId>
+                <version>${json.lib.version.servicemix}</version>
+            </dependency>
+
+            <!-- owt else -->
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time2-version}</version>
+            </dependency>
+
+            <!-- hyperjaxb -->
+            <dependency>
+                <groupId>org.jvnet.hyperjaxb3</groupId>
+                <artifactId>hyperjaxb3-ejb-runtime</artifactId>
+                <version>${hyperjaxb3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jvnet.hyperjaxb3</groupId>
+                <artifactId>hyperjaxb3-ejb-schemas-customizations</artifactId>
+                <version>${hyperjaxb3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jvnet.jaxb2_commons</groupId>
+                <artifactId>jaxb2-basics-runtime</artifactId>
+                <version>${jaxb2-basics.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-test</artifactId>
+                <version>${camel-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-testng</artifactId>
+                <version>${camel-version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-codegen-plugin</artifactId>
+                    <version>${cxf-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>${bundle.plugin.version}</version>
+                    <extensions>true</extensions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-maven-plugin</artifactId>
+                    <version>${camel-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>jaxb2-maven-plugin</artifactId>
+                    <version>${jaxb.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.karaf.tooling</groupId>
+                    <artifactId>karaf-maven-plugin</artifactId>
+                    <version>${karaf.plugin.version}</version>
+                    <extensions>true</extensions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.karaf.tooling</groupId>
+                    <artifactId>features-maven-plugin</artifactId>
+                    <version>${features.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${build.helper.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.surefire</groupId>
+                            <artifactId>surefire-junit47</artifactId>
+                            <version>${surefire.junit47.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven.failsafe.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven.install.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven.deploy.plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.wagon</groupId>
+                            <artifactId>wagon-ftp</artifactId>
+                            <version>${wagon.ftp.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${maven.release.plugin.version}</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-deploy-plugin</artifactId>
+                            <version>${maven.deploy.plugin.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.maven.wagon</groupId>
+                            <artifactId>wagon-ftp</artifactId>
+                            <version>${wagon.ftp.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>${findbugs.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jvnet.hyperjaxb3</groupId>
+                    <artifactId>maven-hyperjaxb3-plugin</artifactId>
+                    <version>${hyperjaxb3.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                            <configuration>
+                                <variant>jpa2</variant>
+                                <extension>true</extension>
+                                <removeOldOutput>true</removeOldOutput>
+                                <persistenceXml>src/main/resources/META-INF/persistence.xml</persistenceXml>
+                                <schemaDirectory>src/main/resources/</schemaDirectory>
+                                <args>
+                                    <arg>-XtoString</arg>
+                                </args>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${docker-maven-plugin.version}</version>
+                    <configuration>
+                        <watchInterval>500</watchInterval>
+                        <logDate>default</logDate>
+                        <verbose>true</verbose>
+                        <autoPull>always</autoPull>
+                        <watchPostGoal>org.apache.maven.plugins:maven-help-plugin:help</watchPostGoal>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${resources.plugin.version}</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin-version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.target.version}</target>
+                    <testSource>${java.version}</testSource>
+                    <testTarget>${java.target.version}</testTarget>
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <compilerArguments>
+                        <source>${java.version}</source>
+                        <target>${java.target.version}</target>
+                    </compilerArguments>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>false</showDeprecation>
+                    <optimize>true</optimize>
+                    <debug>true</debug>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>${wagon.ftp.version}</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>dockerize-service</id>
+            <activation>
+                <file>
+                    <exists>src/main/resources/deployment/features.xml</exists>
+                </file>
+                <property>
+                    <name>!dockerize-infra</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.integration.service</groupId>
+                    <artifactId>integration-super-feature-parent</artifactId>
+                    <version>${integration.super.feature.parent-version}</version>
+                    <classifier>project-sources</classifier>
+                    <type>tar.gz</type>
+                </dependency>
+                <dependency>
+                    <groupId>com.integ.activemq</groupId>
+                    <artifactId>configuration</artifactId>
+                    <version>${amq.configuration.compatibility.version}</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>unpack-sf-dependencies</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>unpack-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeArtifactIds>integration-super-feature-parent</includeArtifactIds>
+                                    <outputDirectory>${project.build.directory}/unpacked-parent-sources</outputDirectory>
+                                    <includes>**/descriptors/*.*,**/*.sh</includes>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>unpack-amq-dependencies</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>unpack-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeGroupIds>com.integ.activemq</includeGroupIds>
+                                    <includeArtifactIds>configuration</includeArtifactIds>
+                                    <outputDirectory>${project.build.directory}/unpacked-amq-sources</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.karaf.tooling</groupId>
+                        <artifactId>karaf-maven-plugin</artifactId>
+                        <version>4.0.9_INTEG_11</version>
+                        <executions>
+                            <execution>
+                                <id>features-add-to-repo</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>features-add-to-repository</goal>
+                                </goals>
+                                <configuration>
+                                    <includeMvnBasedDescriptors>true</includeMvnBasedDescriptors>
+                                    <descriptors>
+                                        <descriptor>mvn:org.apache.karaf.assemblies.features/standard/${karaf-version}/xml/features</descriptor>
+                                        <descriptor>mvn:org.apache.karaf.assemblies.features/enterprise/${karaf-version}/xml/features</descriptor>
+                                        <descriptor>mvn:org.apache.karaf.assemblies.features/spring/${karaf-version}/xml/features</descriptor>
+                                        <descriptor>mvn:org.apache.camel.karaf/apache-camel/${camel-version}/xml/features</descriptor>
+                                        <descriptor>mvn:io.fabric8/fabric8-karaf/${fabric.version}/xml/features</descriptor>
+                                        <descriptor>mvn:${pom.groupId}/${pom.artifactId}/${project.version}/xml/features</descriptor>
+                                    </descriptors>
+                                    <features>
+                                        <feature>${docker.feature.name}</feature>
+                                        <feature>${docker.connectivity.feature.name}</feature>
+                                    </features>
+                                    <includeMvnBasedDescriptors>true</includeMvnBasedDescriptors>
+                                    <repository>target/features-repo</repository>
+                                    <generateMavenMetadata>true</generateMavenMetadata>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <copy todir="${project.build.directory}/docker/scripts" flatten="true">
+                                            <fileset dir="${project.build.directory}/unpacked-parent-sources/">
+                                                <include name="**/scripts/*.*" />
+                                            </fileset>
+                                        </copy>
+                                        <copy todir="${project.build.directory}/docker/descriptors" flatten="true">
+                                            <fileset dir="${project.build.directory}/unpacked-parent-sources/">
+                                                <include name="**/descriptors/*.*" />
+                                            </fileset>
+                                        </copy>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>installer-copy-custom</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <unjar dest="${project.build.directory}/lib-resources-unpacked">
+                                            <fileset dir="${project.build.directory}/features-repo">
+                                                <include name="**/integ/**/*.jar" />
+                                                <!-- <include name="**/integ/**/*.jar" />-->
+                                            </fileset>
+                                        </unjar>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <configuration>
+                            <authConfig>
+                                <useOpenShiftAuth>true</useOpenShiftAuth>
+                            </authConfig>
+                            <autoCreateCustomNetworks>true</autoCreateCustomNetworks>
+                            <images>
+                                <image>
+                                    <name>${project.groupId}.${project.artifactId}:${project.version}</name>
+                                    <alias>${project.artifactId}</alias>
+
+                                    <watch>
+                                        <interval>5000</interval>
+                                        <mode>both</mode>
+                                    </watch>
+                                    <build>
+                                        <from>${docker.registry}/${docker.from}</from>
+                                        <tags>
+                                            <tag>${project.version}</tag>
+                                        </tags>
+                                        <assembly>
+                                            <descriptor>${project.build.directory}/docker/descriptors/docker-assembly.xml</descriptor>
+                                        </assembly>
+                                        <runCmds>
+                                            <run>cp /maven/etc/* /opt/fuse/etc.integ</run>
+                                            <run>chmod u+x /maven/deploy.sh</run>
+                                            <run>echo $'#!/bin/sh\n\
+                                                set -e\n\
+                                                /maven/deploy.sh --deploy-local-service-docker \n\
+                                                /opt/fuse/init_features.sh &amp;\n\
+                                                /opt/fuse/bin/karaf\n' &gt; /opt/fuse/docker-start.sh
+                                            </run>
+                                            <run>chmod u+x /opt/fuse/docker-start.sh</run>
+                                        </runCmds>
+                                        <cmd>
+                                            <shell>/opt/fuse/docker-start.sh</shell>
+                                        </cmd>
+                                    </build>
+                                    <run>
+                                        <namingStrategy>alias</namingStrategy>
+                                        <env>
+                                            <FUSE_DIR>/opt/fuse</FUSE_DIR>
+                                            <WORK_DIR>/maven</WORK_DIR>
+                                            <FEATURE_REPOSITORIES>mvn:${project.groupId}/${project.artifactId}/${project.version}/xml/features</FEATURE_REPOSITORIES>
+                                            <FEATURE_LIST>${docker.connectivity.feature.name}, ${docker.feature.name}</FEATURE_LIST>
+
+                                            <GER_HZ_NETWORK_MEMBERS>${ger.hz.network.tcpip.members}</GER_HZ_NETWORK_MEMBERS>
+                                            <JMS1_SERVICE_NAME>${docker.jms1.service}</JMS1_SERVICE_NAME>
+                                            <JMS1_USERNAME>${docker.jms1.username}</JMS1_USERNAME>
+                                            <JMS1_PASSWORD>${docker.jms1.password}</JMS1_PASSWORD>
+                                            <JMS2_SERVICE_NAME>${docker.jms2.service}</JMS2_SERVICE_NAME>
+                                            <JMS2_USERNAME>${docker.jms2.username}</JMS2_USERNAME>
+                                            <JMS2_PASSWORD>${docker.jms2.password}</JMS2_PASSWORD>
+
+                                            <XADS1_SERVICE_NAME>${docker.xads1.service}</XADS1_SERVICE_NAME>
+                                            <XADS1_USERNAME>${docker.xads1.username}</XADS1_USERNAME>
+                                            <XADS1_PASSWORD>${docker.xads1.password}</XADS1_PASSWORD>
+                                            <XADS1_PORT>${docker.xads1.port}</XADS1_PORT>
+                                            <XADS1_DB>${docker.xads1.dbname}</XADS1_DB>
+                                            <XADS1_DRIVER>${docker.xads1.driver.class}</XADS1_DRIVER>
+                                            <XADS2_SERVICE_NAME>${docker.xads2.service}</XADS2_SERVICE_NAME>
+                                            <XADS2_USERNAME>${docker.xads2.username}</XADS2_USERNAME>
+                                            <XADS2_PASSWORD>${docker.xads2.password}</XADS2_PASSWORD>
+                                            <XADS2_PORT>${docker.xads2.port}</XADS2_PORT>
+                                            <XADS2_DB>${docker.xads2.dbname}</XADS2_DB>
+                                            <XADS2_DRIVER>${docker.xads2.driver.class}</XADS2_DRIVER>
+                                        </env>
+                                        <ports>
+                                            <port>${docker.host.http.port}:8181</port>
+                                            <port>${docker.host.ssh.port}:8101</port>
+                                            <port>${docker.host.jmx.port}:1099</port>
+                                            <port>${docker.host.rmi.port}:44444</port>
+                                        </ports>
+                                        <network>
+                                            <mode>custom</mode>
+                                            <name>integration</name>
+                                            <alias>fuse</alias>
+                                            <alias>karaf</alias>
+                                        </network>
+                                    </run>
+                                </image>
+                            </images>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>dockerize-amq-do-not-call-this-profile-directly-instead-add-Ddockerize-infra</id>
+            <activation>
+                <property>
+                    <name>dockerize-infra</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <configuration>
+                            <authConfig>
+                                <useOpenShiftAuth>true</useOpenShiftAuth>
+                            </authConfig>
+                            <autoCreateCustomNetworks>true</autoCreateCustomNetworks>
+                            <images>
+                                <image>
+                                    <name>amq:${docker.amq.version}</name>
+                                    <alias>amq</alias>
+
+                                    <build>
+                                        <from>${docker.registry}/activemq-base:${docker.amq.version}</from>
+                                        <assembly>
+                                            <descriptor>${project.build.directory}/docker/descriptors/docker-assembly.xml</descriptor>
+                                        </assembly>
+                                        <tags>
+                                            <tag>${docker.amq.version}</tag>
+                                        </tags>
+                                        <runCmds>
+                                            <run>mkdir /opt/amq/deployment</run>
+                                            <run>cp -R /maven/amq/* /opt/amq/deployment/</run>
+                                            <run>chmod u+x /opt/amq/deployment/script/deployActiveMQConfiguration.sh</run>
+                                            <run>/opt/amq/deployment/script/deployActiveMQConfiguration.sh --docker --customer=${customer} --env=LOCALHOST</run>
+                                        </runCmds>
+                                    </build>
+                                    <run>
+                                        <namingStrategy>alias</namingStrategy>
+
+                                        <!-- Because we are attaching to this container network, all port mapping has to be done here, not in our service image -->
+                                        <network>
+                                            <mode>custom</mode>
+                                            <name>integration</name>
+                                            <alias>amq</alias>
+                                        </network>
+                                        <ports>
+                                            <port>${docker.host.amq.http.port}:8161</port>
+                                            <port>${docker.host.amq.jms.port}:61616</port>
+                                        </ports>
+                                        <wait>
+                                            <http>
+                                                <url>http://localhost:${docker.host.amq.http.port}/</url>
+                                                <method>GET</method>
+                                            </http>
+                                            <time>60000</time>
+                                        </wait>
+                                    </run>
+                                </image>
+                                <image>
+                                    <name>mariadb:${docker.mariadb.version}</name>
+                                    <alias>mariadb</alias>
+
+                                    <build>
+                                        <from>${docker.registry}/mariadb-base:${docker.mariadb.version}</from>
+                                        <tags>
+                                            <tag>${docker.mariadb.version}</tag>
+                                        </tags>
+                                    </build>
+                                    <run>
+                                        <namingStrategy>alias</namingStrategy>
+                                        <env>
+                                            <MYSQL_ROOT_PASSWORD>root</MYSQL_ROOT_PASSWORD>
+                                            <MYSQL_PASSWORD>${docker.mariadb.password}</MYSQL_PASSWORD>
+                                            <MYSQL_USER>${docker.mariadb.username}</MYSQL_USER>
+                                        </env>
+
+                                        <!-- Because we are attaching to this container network, all port mapping has to be done here, not in our service image -->
+                                        <network>
+                                            <mode>custom</mode>
+                                            <name>integration</name>
+                                            <alias>mariadb</alias>
+                                        </network>
+                                        <ports>
+                                            <port>${docker.host.mariadb.port}:3306</port>
+                                        </ports>
+                                    </run>
+                                </image>
+                            </images>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <scm>
+        <connection>${scm.protocol}${scm.git.protocol}${scm.host}:${scm.ssh.port}/integ/integration-parent.git</connection>
+        <developerConnection>${scm.protocol}${scm.git.protocol}${scm.host}:${scm.ssh.port}/integ/integration-parent.git</developerConnection>
+        <url>http://${scm.host}:${scm.http.port}/projects/integ/repos/integration-parent/</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <system>JIRA</system>
+        <url>https://jira.integ.com/</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <name>Internal Releases</name>
+            <url>http://nexus:8080/repository/integ-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus</id>
+            <name>Internal Snapshot</name>
+            <url>http://nexus:8080/repository/integ-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>
