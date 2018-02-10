@@ -146,7 +146,7 @@
         <!-- SCM -->
         <scm.protocol>scm:git:</scm.protocol>
         <scm.git.protocol>ssh://</scm.git.protocol>
-        <scm.host>ald-stash</scm.host>
+        <scm.host>bitbuket</scm.host>
         <scm.ssh.port>7999</scm.ssh.port>
         <scm.http.port>7990</scm.http.port>
     </properties>
